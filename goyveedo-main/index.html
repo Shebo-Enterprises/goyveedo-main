@@ -1,0 +1,1608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GOYVEEDO</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            /* Dark Mode (Default) */
+            --primary-bg: #1a1a1a;
+            --secondary-bg: #2a2a2a;
+            --card-bg: #333333;
+            --text-color: #f0f0f0;
+            --header-text: #f0f0f0;
+            --description-text: #bbb;
+            --meta-text: #999;
+            --accent-color: #007bff;
+            --border-color: #444;
+            --hover-color: #4a4a4a;
+            --input-bg: #2a2a2a;
+            --input-text: #f0f0f0;
+            --input-border: #444;
+            --placeholder-text: #888;
+        }
+
+        body.light-mode {
+            /* Light Mode Overrides */
+            --primary-bg: #f4f5f7;
+            --secondary-bg: #ffffff;
+            --card-bg: #ffffff;
+            --text-color: #1f2937;
+            --header-text: #111827;
+            --description-text: #4b5563;
+            --meta-text: #6b7280;
+            --border-color: #e5e7eb;
+            --hover-color: #f9fafb;
+            --input-bg: #ffffff;
+            --input-text: #1f2937;
+            --input-border: #d1d5db;
+            --placeholder-text: #6b7280;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--primary-bg);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .ui.menu {
+            background-color: var(--secondary-bg);
+            border-bottom: 1px solid var(--border-color);
+            border-radius: 0;
+            margin-bottom: 0;
+            padding: 10px 20px;
+        }
+
+        .ui.menu .item {
+            color: var(--text-color);
+            font-weight: 500;
+        }
+
+        .ui.menu .item:hover {
+            background-color: var(--hover-color);
+            color: var(--text-color);
+        }
+
+        .ui.menu .item.active {
+            color: var(--accent-color);
+            border-bottom: 2px solid var(--accent-color);
+            background: none;
+        }
+
+        .ui.menu .right.menu .item {
+            padding-right: 0;
+        }
+
+        .ui.inverted.segment {
+            background-color: var(--secondary-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px;
+        }
+
+        .ui.card, .ui.cards > .card {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            transition: transform 0.2s ease-in-out;
+        }
+
+        .ui.card:hover, .ui.cards > .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+        }
+
+        .ui.card > .image > img {
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+            height: 180px; /* Fixed height for thumbnails */
+            object-fit: cover;
+        }
+
+        .ui.card > .image {
+            position: relative;
+        }
+
+        .video-lock-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+        }
+
+        .video-lock-overlay i {
+            font-size: 3em;
+            color: #fff;
+        }
+
+        .player-lock-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            z-index: 10;
+        }
+
+        .player-lock-overlay i {
+            font-size: 4em;
+            color: #fff;
+            margin-bottom: 20px;
+        }
+
+        .player-lock-overlay p {
+            color: #fff;
+            font-size: 1.2em;
+            text-align: center;
+            margin: 0;
+        }
+
+        #video-player-section {
+            position: relative;
+        }
+
+        .channel-filter {
+            margin-bottom: 20px;
+        }
+
+        .channel-tabs {
+            margin-bottom: 20px;
+        }
+
+        .featured-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #ff6b35;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            font-weight: bold;
+            z-index: 5;
+        }
+
+        .ui.card > .content {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            padding: 15px;
+        }
+
+        .ui.card > .content > .header {
+            color: var(--header-text);
+            font-size: 1.2em;
+            margin-bottom: 5px;
+        }
+
+        .ui.card > .content > .description {
+            color: var(--description-text);
+            font-size: 0.9em;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+        }
+
+        .ui.modal > .header {
+            background-color: var(--secondary-bg);
+            color: var(--text-color);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .ui.modal > .content {
+            background-color: var(--primary-bg);
+            color: var(--text-color);
+        }
+
+        .ui.modal > .actions {
+            background-color: var(--secondary-bg);
+            border-top: 1px solid var(--border-color);
+        }
+
+        .ui.form input[type="text"],
+        .ui.form input[type="email"],
+        .ui.form input[type="password"],
+        .ui.form textarea {
+            background-color: var(--input-bg) !important;
+            color: var(--input-text) !important;
+            border: 1px solid var(--input-border) !important;
+            border-radius: 5px !important;
+        }
+
+        /* Semantic UI dropdown needs specific overrides for light mode */
+        .ui.form input[type="text"]::placeholder,
+        .ui.form input[type="email"]::placeholder,
+        .ui.form input[type="password"]::placeholder,
+        .ui.form textarea::placeholder {
+            color: #888 !important;
+        }
+
+        .ui.form .field > label {
+            color: var(--text-color) !important;
+        }
+
+        .ui.button {
+            border-radius: 5px;
+            transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+        }
+
+        .ui.primary.button {
+            background-color: var(--accent-color);
+            color: white;
+        }
+
+        .ui.primary.button:hover {
+            background-color: #0056b3;
+            color: white;
+        }
+
+        .ui.negative.button {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .ui.negative.button:hover {
+            background-color: #c82333;
+            color: white;
+        }
+
+        .ui.table {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+        }
+
+        .ui.table thead th {
+            background-color: var(--secondary-bg);
+            color: var(--text-color);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .ui.table tbody tr {
+            background-color: var(--card-bg);
+        }
+
+        .ui.table tbody tr:hover {
+            background-color: var(--hover-color);
+        }
+
+        .ui.table td {
+            color: var(--text-color);
+            border-top: 1px solid var(--border-color);
+        }
+
+        #video-player-section iframe { /* Changed to iframe */
+            width: 100%;
+            max-height: 70vh;
+            background-color: black;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .video-details h2 {
+            color: var(--header-text);
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+
+        .video-details p {
+            color: var(--description-text);
+            line-height: 1.6;
+        }
+
+        .ui.segment {
+            background-color: var(--secondary-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px;
+        }
+
+        .message-box {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            background-color: #28a745;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            display: none; /* Hidden by default */
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        .message-box.error {
+            background-color: #dc3545;
+        }
+
+        .message-box.show {
+            display: block;
+            opacity: 1;
+        }
+
+        .loader-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.3s, visibility 0.3s;
+        }
+
+        .loader-overlay.active {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .ui.active.loader {
+            color: white;
+        }
+
+        /* --- Light Mode Overrides for Semantic UI Inverted Components --- */
+        body.light-mode .ui.inverted.menu {
+            background: var(--secondary-bg);
+            border-bottom: 1px solid var(--border-color);
+        }
+        body.light-mode .ui.inverted.menu .item {
+            color: var(--text-color);
+        }
+        body.light-mode .ui.inverted.menu .item:hover {
+            background: var(--hover-color);
+        }
+        body.light-mode .ui.inverted.menu .item.active {
+            color: var(--accent-color);
+            background: none;
+        }
+        body.light-mode .ui.inverted.segment {
+            background: var(--secondary-bg);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+        }
+        body.light-mode .ui.table.inverted {
+            background: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+        }
+        body.light-mode .ui.table.inverted thead th {
+            background: var(--secondary-bg);
+            color: var(--text-color);
+        }
+        body.light-mode .ui.table.inverted td {
+            color: var(--text-color);
+            border-top: 1px solid var(--border-color);
+        }
+        body.light-mode .ui.basic.inverted.button {
+            background-color: transparent !important;
+            color: var(--text-color) !important;
+            box-shadow: 0 0 0 1px var(--border-color) inset !important;
+        }
+
+        /* Responsive adjustments */
+        @media only screen and (max-width: 767px) {
+            .ui.menu .item {
+                padding: 10px 15px;
+            }
+            .ui.container {
+                margin-left: 10px !important;
+                margin-right: 10px !important;
+            }
+            .ui.cards.three > .card {
+                width: 100% !important;
+                margin-left: 0 !important;
+                margin-right: 0 !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="message-box" class="message-box"></div>
+
+    <div id="loader-overlay" class="loader-overlay">
+        <div class="ui active inverted dimmer">
+            <div class="ui large text loader">Loading...</div>
+        </div>
+    </div>
+
+    <div class="ui modal" id="login-modal">
+        <div class="header">Login</div>
+        <div class="content">
+            <form class="ui form" id="login-form">
+                <div class="field">
+                    <label>Email</label>
+                    <input type="email" name="email" placeholder="Email" required>
+                </div>
+                <div class="field">
+                    <label>Password</label>
+                    <input type="password" name="password" placeholder="Password" required>
+                </div>
+                <button class="ui primary button" type="submit">Login</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="ui modal" id="signup-modal">
+        <div class="header">Sign Up</div>
+        <div class="content">
+            <form class="ui form" id="signup-form">
+                <div class="field">
+                    <label>Email</label>
+                    <input type="email" name="email" placeholder="Email" required>
+                </div>
+                <div class="field">
+                    <label>Password</label>
+                    <input type="password" name="password" placeholder="Password" required>
+                </div>
+                <button class="ui primary button" type="submit">Sign Up</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="ui modal" id="video-modal">
+        <div class="header" id="video-modal-header">Add New Video</div>
+        <div class="content">
+            <form class="ui form" id="video-form">
+                <input type="hidden" id="video-id-input">
+                <div class="field">
+                    <label>Title</label>
+                    <input type="text" id="video-title" placeholder="Video Title" required>
+                </div>
+                <div class="field">
+                    <label>Description</label>
+                    <textarea id="video-description" placeholder="Video Description" rows="3"></textarea>
+                </div>
+                <div class="field">
+                    <label>Thumbnail URL (Optional)</label>
+                    <input type="text" id="video-thumbnail" placeholder="e.g., https://placehold.co/600x400">
+                </div>
+                <div class="field">
+                    <label>Google Drive Embed Link</label>
+                    <input type="url" id="video-url" placeholder="Paste Google Drive embed link here" required>
+                    <p class="ui mini text" style="margin-top: 5px; color: #aaa;">
+                        Ensure your Google Drive video is shared publicly ("Anyone with the link can view").
+                        Get the embed link from Google Drive: Right-click video > Share > Get link > Change to "Anyone with the link" > Copy link.
+                        Then go to File > Embed item > Copy the `src` URL from the iframe.
+                    </p>
+                </div>
+                <div class="field">
+                    <label>Channel/Show</label>
+                    <input type="text" id="video-channel" placeholder="e.g., Comedy Central, Drama Series, etc." required>
+                </div>
+                <div class="field">
+                    <div class="ui checkbox">
+                        <input type="checkbox" id="video-featured">
+                        <label>Featured Video (Show in featured section)</label>
+                    </div>
+                </div>
+                <button class="ui primary button" type="submit" id="video-form-submit-btn">Add Video</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="ui modal" id="user-role-modal">
+        <div class="header">Change User Role</div>
+        <div class="content">
+            <form class="ui form" id="user-role-form">
+                <input type="hidden" id="user-id-input">
+                <div class="field">
+                    <label>User Email</label>
+                    <input type="text" id="user-email-display" readonly>
+                </div>
+                <div class="field">
+                    <label>New Role</label>
+                    <select id="user-new-role" class="ui dropdown">
+                        <option value="user">User (No video access)</option>
+                        <option value="viewer">Viewer (Can watch videos)</option>
+                        <option value="admin">Admin (Full access)</option>
+                    </select>
+                </div>
+                <button class="ui primary button" type="submit">Update Role</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="ui inverted menu">
+        <div class="ui container">
+            <a class="item" id="home-link">
+                <i class="play circle outline icon"></i>
+                GOYVEEDO
+            </a>
+            <div class="right menu">
+                <a class="item" id="theme-toggle-btn" title="Toggle Theme" style="cursor: pointer;">
+                    <i class="large moon icon" id="theme-icon"></i>
+                </a>
+                <div class="item" id="user-info-display" style="display: none;">
+                    Welcome, <span id="current-user-email"></span> (<span id="current-user-role"></span>)
+                </div>
+                <a class="item" id="admin-link" style="display: none;">
+                    <i class="cogs icon"></i> Admin
+                </a>
+                <a class="item" id="login-btn">
+                    <i class="sign in alternate icon"></i> Login
+                </a>
+                <a class="item" id="signup-btn">
+                    <i class="user plus icon"></i> Sign Up
+                </a>
+                <a class="item" id="logout-btn" style="display: none;">
+                    <i class="sign out alternate icon"></i> Logout
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="ui container" style="flex-grow: 1; padding: 20px 0;">
+
+        <div id="home-section" class="ui segment" style="display: none;">
+            <h2 class="ui header" style="color: var(--text-color);">Featured Videos</h2>
+            <div class="ui three stackable cards" id="featured-video-grid">
+            </div>
+            <p id="no-featured-videos-message" style="text-align: center; color: #888; display: none;">No featured videos available yet.</p>
+            
+            <div class="ui divider"></div>
+            
+            <h2 class="ui header" style="color: var(--text-color);">Browse by Channel</h2>
+            <div class="channel-filter">
+                <div class="ui fluid search selection dropdown" id="channel-dropdown">
+                    <input type="hidden" name="channel">
+                    <i class="dropdown icon"></i>
+                    <div class="default text">Select a channel...</div>
+                    <div class="menu" id="channel-menu">
+                        <div class="item" data-value="all">All Channels</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="ui three stackable cards" id="video-grid">
+            </div>
+            <p id="no-videos-message" style="text-align: center; color: #888; display: none;">No videos available yet. Check back later!</p>
+        </div>
+
+        <div id="video-player-section" class="ui segment" style="display: none;">
+            <button class="ui basic inverted button" id="back-to-home-btn" style="margin-bottom: 20px;">
+                <i class="arrow left icon"></i> Back to Home
+            </button>
+            <iframe id="video-iframe-player" width="100%" height="450" frameborder="0" allowfullscreen></iframe>
+            <div class="video-details">
+                <h2 id="player-video-title"></h2>
+                <p id="player-video-description" style="color: var(--description-text);"></p>
+                <p style="color: #999; font-size: 0.9em;">Uploaded by: <span id="player-video-uploader"></span></p>
+            </div>
+        </div>
+
+        <div id="admin-section" class="ui segment" style="display: none;">
+            <h2 class="ui header" style="color: var(--text-color);">Admin Dashboard</h2>
+            <div class="ui top attached tabular menu">
+                <a class="item active" data-tab="videos">Video Management</a>
+                <a class="item" data-tab="users">User Management</a>
+            </div>
+            <div class="ui bottom attached tab segment active" data-tab="videos">
+                <button class="ui primary button" id="add-video-btn" style="margin-bottom: 20px;">
+                    <i class="plus icon"></i> Add New Video
+                </button>
+                <table class="ui celled table inverted">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Channel</th>
+                            <th>Featured</th>
+                            <th>Uploader</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="admin-video-list">
+                        </tbody>
+                </table>
+                <p id="no-admin-videos-message" style="text-align: center; color: #888; display: none;">No videos to manage.</p>
+            </div>
+            <div class="ui bottom attached tab segment" data-tab="users">
+                <table class="ui celled table inverted">
+                    <thead>
+                        <tr>
+                            <th>User ID</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="admin-user-list">
+                        </tbody>
+                </table>
+                <p id="no-admin-users-message" style="text-align: center; color: #888; display: none;">No users to manage.</p>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.js"></script>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getAuth, signInWithCustomToken, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import { getFirestore, collection, getDocs, getDoc, doc, setDoc, addDoc, updateDoc, deleteDoc, onSnapshot, query, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+        // --- Firebase Configuration ---
+        // REPLACE WITH YOUR ACTUAL FIREBASE PROJECT CONFIG
+        const firebaseConfig = {
+     apiKey: "AIzaSyASp0AE4kv-I1B5ewdFdFYx35-8qgseUKA",
+  authDomain: "goyveedo.firebaseapp.com",
+  projectId: "goyveedo",
+  storageBucket: "goyveedo.firebasestorage.app",
+  messagingSenderId: "295699400071",
+  appId: "1:295699400071:web:df84c11b9e3dd7c2913f22"
+        };
+
+        // If you are using a custom initial authentication token for development/testing,
+        // you can place it here. Otherwise, leave it as null.
+        const initialAuthToken = null; // e.g., "YOUR_CUSTOM_AUTH_TOKEN_HERE"
+
+        // Your app ID for Firestore document paths (often same as firebaseConfig.appId)
+        // Make sure this matches the `appId` in your Firebase Security Rules.
+        const appId = firebaseConfig.appId;
+        // --- End Firebase Configuration ---
+
+        // Initialize Firebase
+        let firebaseApp;
+        let db;
+        let auth;
+        let currentUser = null; // Stores current authenticated user object
+        let currentUserId = null; // Stores current user's UID
+        let currentUserRole = 'guest'; // Default role
+        let isAuthReady = false; // Flag to ensure Firebase auth is initialized
+
+        // UI Elements
+        const loginModal = $('#login-modal');
+        const signupModal = $('#signup-modal');
+        const videoModal = $('#video-modal');
+        const userRoleModal = $('#user-role-modal');
+        const loginForm = $('#login-form');
+        const signupForm = $('#signup-form');
+        const videoForm = $('#video-form');
+        const userRoleForm = $('#user-role-form');
+        const homeSection = $('#home-section');
+        const videoPlayerSection = $('#video-player-section');
+        const adminSection = $('#admin-section');
+        const videoGrid = $('#video-grid');
+        const featuredVideoGrid = $('#featured-video-grid');
+        const channelDropdown = $('#channel-dropdown');
+        const channelMenu = $('#channel-menu');
+        const videoIframePlayer = $('#video-iframe-player'); // Changed to iframe
+        const playerVideoTitle = $('#player-video-title');
+        const playerVideoDescription = $('#player-video-description');
+        const playerVideoUploader = $('#player-video-uploader');
+        const adminVideoList = $('#admin-video-list');
+        const adminUserList = $('#admin-user-list');
+        const userInfoDisplay = $('#user-info-display');
+        const currentUserEmailSpan = $('#current-user-email');
+        const currentUserRoleSpan = $('#current-user-role');
+        const adminLink = $('#admin-link');
+        const loginBtn = $('#login-btn');
+        const signupBtn = $('#signup-btn');
+        const logoutBtn = $('#logout-btn');
+        const messageBox = $('#message-box');
+        const loaderOverlay = $('#loader-overlay');
+        const noVideosMessage = $('#no-videos-message');
+        const noFeaturedVideosMessage = $('#no-featured-videos-message');
+        const noAdminVideosMessage = $('#no-admin-videos-message');
+        const noAdminUsersMessage = $('#no-admin-users-message');
+
+        // Global variables for filtering
+        let allVideos = [];
+        let selectedChannel = 'all';
+
+        // --- Utility Functions ---
+
+        /**
+         * Checks if the current user can watch videos
+         * @returns {boolean} True if user can watch videos
+         */
+        function canWatchVideos() {
+            return currentUserRole === 'viewer' || currentUserRole === 'admin';
+        }
+
+        /**
+         * Displays a message box with a given message and type (success/error).
+         * @param {string} message - The message to display.
+         * @param {string} type - 'success' or 'error'.
+         */
+        function showMessage(message, type = 'success') {
+            messageBox.text(message);
+            messageBox.removeClass('success error').addClass(type);
+            messageBox.addClass('show');
+            setTimeout(() => {
+                messageBox.removeClass('show');
+            }, 3000); // Hide after 3 seconds
+        }
+
+        /**
+         * Shows or hides the loading overlay.
+         * @param {boolean} isLoading - True to show, false to hide.
+         */
+        function showLoading(isLoading) {
+            if (isLoading) {
+                loaderOverlay.addClass('active');
+            } else {
+                loaderOverlay.removeClass('active');
+            }
+        }
+
+        /**
+         * Shows a specific content section and hides others.
+         * @param {string} sectionId - The ID of the section to show (e.g., 'home-section').
+         */
+        function showSection(sectionId) {
+            homeSection.hide();
+            videoPlayerSection.hide();
+            adminSection.hide();
+            $('#' + sectionId).show();
+        }
+
+        /**
+         * Updates the header UI based on the current user's authentication status and role.
+         * @param {object | null} user - The Firebase User object or null if logged out.
+         */
+        function updateHeader(user) {
+            if (user) {
+                userInfoDisplay.show();
+                currentUserEmailSpan.text(user.email);
+                currentUserRoleSpan.text(currentUserRole);
+                loginBtn.hide();
+                signupBtn.hide();
+                logoutBtn.show();
+                if (currentUserRole === 'admin') {
+                    adminLink.show();
+                } else {
+                    adminLink.hide();
+                }
+            } else {
+                userInfoDisplay.hide();
+                loginBtn.show();
+                signupBtn.show();
+                logoutBtn.hide();
+                adminLink.hide();
+            }
+        }
+
+        /**
+         * Applies the selected theme (dark/light) to the application.
+         * @param {string} theme - The theme to apply ('dark' or 'light').
+         */
+        function applyTheme(theme) {
+            const body = $('body');
+            const themeIcon = $('#theme-icon');
+            const dropdowns = $('.ui.dropdown');
+
+            if (theme === 'light') {
+                body.addClass('light-mode');
+                themeIcon.removeClass('moon').addClass('sun');
+                // Semantic UI dropdowns need to be re-initialized to pick up new theme styles
+                dropdowns.removeClass('inverted');
+                localStorage.setItem('theme', 'light');
+            } else { // 'dark'
+                body.removeClass('light-mode');
+                themeIcon.removeClass('sun').addClass('moon');
+                dropdowns.addClass('inverted');
+                localStorage.setItem('theme', 'dark');
+            }
+            // Re-initialize dropdowns that might have been affected
+            $('.ui.selection.dropdown').dropdown();
+            $('#user-new-role').dropdown();
+        }
+
+
+        // --- Firebase Initialization and Authentication ---
+
+        // Initialize Firebase services
+        try {
+            firebaseApp = initializeApp(firebaseConfig);
+            db = getFirestore(firebaseApp);
+            auth = getAuth(firebaseApp);
+        } catch (error) {
+            console.error("Error initializing Firebase:", error);
+            showMessage("Failed to initialize application. Please check console for details.", "error");
+        }
+
+        // Listen for authentication state changes
+        onAuthStateChanged(auth, async (user) => {
+            currentUser = user;
+            if (user) {
+                currentUserId = user.uid;
+                const userParentDocRef = doc(db, `artifacts/${appId}/users/${currentUserId}`);
+                const userProfileDocRef = doc(db, `artifacts/${appId}/users/${currentUserId}/profile/data`);
+
+                try {
+                    const userParentDoc = await getDoc(userParentDocRef);
+
+                    // Check if user has been soft-deleted by an admin
+                    if (userParentDoc.exists() && userParentDoc.data().status === 'deleted') {
+                        showMessage("Your account has been disabled. Please contact an administrator.", "error");
+                        await signOut(auth); // Force logout
+                        return; // Stop further processing
+                    }
+
+                    const userProfileDoc = await getDoc(userProfileDocRef);
+                    if (userProfileDoc.exists()) {
+                        currentUserRole = userProfileDoc.data().role || 'user';
+                    } else {
+                        // If profile doesn't exist, create both parent and profile docs
+                        await setDoc(userParentDocRef, { status: 'active', createdAt: new Date() });
+                        await setDoc(userProfileDocRef, { email: user.email, role: 'user' });
+                        currentUserRole = 'user';
+                    }
+                } catch (error) {
+                    console.error("Error fetching user data:", error);
+                    currentUserRole = 'user'; // Default to user role on error
+                }
+            } else {
+                currentUserRole = 'guest';
+                currentUserId = null;
+            }
+            isAuthReady = true;
+            updateHeader(user);
+            if (user) {
+                showSection('home-section');
+                loadVideos();
+            } else {
+                showSection('home-section');
+                videoGrid.empty();
+                featuredVideoGrid.empty();
+                noVideosMessage.text("Please login or sign up to view videos.").show();
+                noFeaturedVideosMessage.text("Please login or sign up to view videos.").show();
+            }
+        });
+
+        // Sign in with custom token if available, otherwise prompt for login
+        if (initialAuthToken) {
+            signInWithCustomToken(auth, initialAuthToken)
+                .then(() => {
+                    console.log("Signed in with custom token.");
+                })
+                .catch((error) => {
+                    console.error("Error signing in with custom token:", error);
+                    showMessage("Automatic login failed. Please login manually.", "error");
+                });
+        } else {
+            console.log("No initial auth token found. User needs to login or sign up.");
+            // If no initial token, and anonymous users are disallowed, the user will see login/signup options.
+        }
+
+        // --- Authentication Functions ---
+
+        /**
+         * Registers a new user with email and password.
+         * @param {string} email
+         * @param {string} password
+         */
+        async function registerUser(email, password) {
+            showLoading(true);
+            try {
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                const userId = userCredential.user.uid;
+                // Create both the parent user document and the profile subcollection document
+                const userParentDocRef = doc(db, `artifacts/${appId}/users/${userId}`);
+                const userProfileDocRef = doc(db, `artifacts/${appId}/users/${userId}/profile/data`);
+
+                await setDoc(userParentDocRef, { status: 'active', createdAt: new Date() });
+                await setDoc(userProfileDocRef, { email: email, role: 'user' }); // Default role is 'user'
+
+                showMessage("Registration successful! You are now logged in.");
+                signupModal.modal('hide');
+            } catch (error) {
+                console.error("Sign up error:", error);
+                showMessage(`Sign up failed: ${error.message}`, "error");
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        /**
+         * Logs in an existing user with email and password.
+         * @param {string} email
+         * @param {string} password
+         */
+        async function loginUser(email, password) {
+            showLoading(true);
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
+                showMessage("Login successful!");
+                loginModal.modal('hide');
+            } catch (error) {
+                console.error("Login error:", error);
+                showMessage(`Login failed: ${error.message}`, "error");
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        /**
+         * Logs out the current user.
+         */
+        async function logoutUser() {
+            showLoading(true);
+            try {
+                await signOut(auth);
+                showMessage("Logged out successfully.");
+                showSection('home-section'); // Go back to home, which will now show login prompt
+                videoGrid.empty();
+                noVideosMessage.text("Please login or sign up to view videos.").show();
+            } catch (error) {
+                console.error("Logout error:", error);
+                showMessage(`Logout failed: ${error.message}`, "error");
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // --- Video Management (Firestore) ---
+
+        /**
+         * Fetches and displays all videos for authenticated users.
+         */
+        async function loadVideos() {
+            if (!isAuthReady || !currentUser) {
+                console.log("Auth not ready or user not logged in. Cannot load videos.");
+                noVideosMessage.text("Please login or sign up to view videos.").show();
+                noFeaturedVideosMessage.text("Please login or sign up to view videos.").show();
+                videoGrid.empty();
+                featuredVideoGrid.empty();
+                return;
+            }
+
+            showLoading(true);
+            try {
+                const videosCollectionRef = collection(db, `artifacts/${appId}/public/data/videos`);
+                // Using onSnapshot for real-time updates
+                onSnapshot(videosCollectionRef, (snapshot) => {
+                    const videos = [];
+                    snapshot.forEach(doc => {
+                        videos.push({ id: doc.id, ...doc.data() });
+                    });
+                    allVideos = videos;
+                    renderFeaturedVideos(videos.filter(video => video.featured));
+                    renderChannelDropdown(videos);
+                    renderVideos(videos);
+                    showLoading(false);
+                }, (error) => {
+                    console.error("Error fetching videos:", error);
+                    showMessage("Failed to load videos.", "error");
+                    showLoading(false);
+                });
+            } catch (error) {
+                console.error("Error setting up video listener:", error);
+                showMessage("Failed to load videos.", "error");
+                showLoading(false);
+            }
+        }
+
+        /**
+         * Renders featured video cards.
+         * @param {Array<object>} videos - Array of featured video objects.
+         */
+        function renderFeaturedVideos(videos) {
+            featuredVideoGrid.empty();
+            if (videos.length === 0) {
+                noFeaturedVideosMessage.show();
+            } else {
+                noFeaturedVideosMessage.hide();
+                videos.forEach(video => {
+                    const lockOverlay = !canWatchVideos() ? '<div class="video-lock-overlay"><i class="lock icon"></i></div>' : '';
+                    const featuredBadge = '<div class="featured-badge">Featured</div>';
+                    const card = `
+                        <div class="card" data-id="${video.id}">
+                            <div class="image">
+                                <img src="${video.thumbnailUrl || 'https://placehold.co/600x400/333/fff?text=No+Thumbnail'}" alt="${video.title}">
+                                ${lockOverlay}
+                                ${featuredBadge}
+                            </div>
+                            <div class="content">
+                                <div class="header">${video.title}</div>
+                                <div class="description">${video.description || 'No description available.'}</div>
+                                <div class="meta">Channel: ${video.channel || 'Unknown'}</div>
+                            </div>
+                        </div>
+                    `;
+                    featuredVideoGrid.append(card);
+                });
+
+                // Attach click listener to each featured video card
+                featuredVideoGrid.find('.card').on('click', function() {
+                    const videoId = $(this).data('id');
+                    if (canWatchVideos()) {
+                        playVideo(videoId);
+                    } else {
+                        showMessage("You need viewer or admin privileges to watch videos.", "error");
+                    }
+                });
+            }
+        }
+
+        /**
+         * Renders video cards on the home page.
+         * @param {Array<object>} videos - Array of video objects.
+         */
+        function renderVideos(videos) {
+            // Filter videos by selected channel
+            let filteredVideos = videos;
+            if (selectedChannel !== 'all') {
+                filteredVideos = videos.filter(video => video.channel === selectedChannel);
+            }
+
+            videoGrid.empty();
+            if (filteredVideos.length === 0) {
+                noVideosMessage.show();
+            } else {
+                noVideosMessage.hide();
+                filteredVideos.forEach(video => {
+                    const lockOverlay = !canWatchVideos() ? '<div class="video-lock-overlay"><i class="lock icon"></i></div>' : '';
+                    const card = `
+                        <div class="card" data-id="${video.id}">
+                            <div class="image">
+                                <img src="${video.thumbnailUrl || 'https://placehold.co/600x400/333/fff?text=No+Thumbnail'}" alt="${video.title}">
+                                ${lockOverlay}
+                            </div>
+                            <div class="content">
+                                <div class="header">${video.title}</div>
+                                <div class="description">${video.description || 'No description available.'}</div>
+                                <div class="meta">Channel: ${video.channel || 'Unknown'}</div>
+                            </div>
+                        </div>
+                    `;
+                    videoGrid.append(card);
+                });
+
+                // Attach click listener to each video card
+                videoGrid.find('.card').on('click', function() {
+                    const videoId = $(this).data('id');
+                    if (canWatchVideos()) {
+                        playVideo(videoId);
+                    } else {
+                        showMessage("You need viewer or admin privileges to watch videos.", "error");
+                    }
+                });
+            }
+        }
+
+        /**
+         * Renders the channel dropdown with available channels.
+         * @param {Array<object>} videos - Array of video objects.
+         */
+        function renderChannelDropdown(videos) {
+            const channels = [...new Set(videos.map(video => video.channel).filter(channel => channel))];
+            channelMenu.empty();
+            channelMenu.append('<div class="item" data-value="all">All Channels</div>');
+            channels.forEach(channel => {
+                channelMenu.append(`<div class="item" data-value="${channel}">${channel}</div>`);
+            });
+        }
+
+        /**
+         * Plays a selected video using its Google Drive embed link.
+         * @param {string} videoId - The ID of the video to play.
+         */
+        async function playVideo(videoId) {
+            showLoading(true);
+            try {
+                const videoDocRef = doc(db, `artifacts/${appId}/public/data/videos`, videoId);
+                const videoDoc = await getDoc(videoDocRef);
+
+                if (videoDoc.exists()) {
+                    const videoData = videoDoc.data();
+                    
+                    // Clear any existing lock overlay
+                    $('#video-player-section .player-lock-overlay').remove();
+                    
+                    if (canWatchVideos()) {
+                        // Set the iframe src to the Google Drive embed link
+                        videoIframePlayer.attr('src', videoData.videoUrl);
+                    } else {
+                        // Clear iframe and add lock overlay
+                        videoIframePlayer.attr('src', '');
+                        const lockOverlay = `
+                            <div class="player-lock-overlay">
+                                <i class="lock icon"></i>
+                                <p>You need viewer or admin privileges to watch this video.<br>Please contact an administrator to upgrade your account.</p>
+                            </div>
+                        `;
+                        videoPlayerSection.append(lockOverlay);
+                    }
+                    
+                    playerVideoTitle.text(videoData.title);
+                    playerVideoDescription.text(videoData.description || 'No description available.');
+                    playerVideoUploader.text(videoData.uploaderEmail || 'Unknown');
+                    showSection('video-player-section');
+                } else {
+                    showMessage("Video not found.", "error");
+                }
+            } catch (error) {
+                console.error("Error playing video:", error);
+                showMessage(`Failed to play video: ${error.message}`, "error");
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        /**
+         * Handles adding or updating a video.
+         * @param {Event} event - The form submission event.
+         */
+        async function handleVideoFormSubmit(event) {
+            event.preventDefault();
+            if (!currentUser || currentUserRole !== 'admin') {
+                showMessage("You are not authorized to perform this action.", "error");
+                return;
+            }
+
+            showLoading(true);
+            const videoId = $('#video-id-input').val();
+            const title = $('#video-title').val();
+            const description = $('#video-description').val();
+            const thumbnail = $('#video-thumbnail').val();
+            const videoUrl = $('#video-url').val(); // Google Drive embed link
+            const channel = $('#video-channel').val();
+            const featured = $('#video-featured').is(':checked');
+
+            try {
+                if (videoId) { // Editing existing video
+                    await updateDoc(doc(db, `artifacts/${appId}/public/data/videos`, videoId), {
+                        title,
+                        description,
+                        thumbnailUrl: thumbnail,
+                        videoUrl, // Update video URL
+                        channel,
+                        featured,
+                        lastUpdated: new Date()
+                    });
+                    showMessage("Video updated successfully!");
+                } else { // Adding new video
+                    // Auto-generate ID for new video document
+                    const newVideoRef = doc(collection(db, `artifacts/${appId}/public/data/videos`));
+                    await setDoc(newVideoRef, {
+                        title,
+                        description,
+                        thumbnailUrl: thumbnail || 'https://placehold.co/600x400/333/fff?text=No+Thumbnail', // Default if none provided
+                        videoUrl, // Store Google Drive embed link
+                        channel,
+                        featured,
+                        uploaderEmail: currentUser.email,
+                        uploadDate: new Date()
+                    });
+                    showMessage("Video added successfully!");
+                }
+                videoModal.modal('hide');
+                loadAdminVideos(); // Refresh admin video list
+            } catch (error) {
+                console.error("Error adding/updating video:", error);
+                showMessage(`Failed to save video: ${error.message}`, "error");
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        /**
+         * Loads and displays videos in the admin dashboard table.
+         */
+        async function loadAdminVideos() {
+            if (!isAuthReady || currentUserRole !== 'admin') {
+                adminVideoList.empty();
+                noAdminVideosMessage.text("You are not authorized to view this section.").show();
+                return;
+            }
+
+            showLoading(true);
+            try {
+                const videosCollectionRef = collection(db, `artifacts/${appId}/public/data/videos`);
+                onSnapshot(videosCollectionRef, (snapshot) => {
+                    const videos = [];
+                    snapshot.forEach(doc => {
+                        videos.push({ id: doc.id, ...doc.data() });
+                    });
+                    renderAdminVideos(videos);
+                    showLoading(false);
+                }, (error) => {
+                    console.error("Error fetching admin videos:", error);
+                    showMessage("Failed to load admin videos.", "error");
+                    showLoading(false);
+                });
+            } catch (error) {
+                console.error("Error setting up admin video listener:", error);
+                showMessage("Failed to load admin videos.", "error");
+                showLoading(false);
+            }
+        }
+
+        /**
+         * Renders the video list in the admin dashboard.
+         * @param {Array<object>} videos - Array of video objects.
+         */
+        function renderAdminVideos(videos) {
+            adminVideoList.empty();
+            if (videos.length === 0) {
+                noAdminVideosMessage.show();
+            } else {
+                noAdminVideosMessage.hide();
+                videos.forEach(video => {
+                    const featuredIcon = video.featured ? '<i class="star icon" style="color: #ff6b35;"></i>' : '<i class="star outline icon"></i>';
+                    const row = `
+                        <tr>
+                            <td>${video.title}</td>
+                            <td>${video.channel || 'N/A'}</td>
+                            <td>${featuredIcon}</td>
+                            <td>${video.uploaderEmail || 'N/A'}</td>
+                            <td>
+                                <button class="ui mini primary button edit-video-btn" data-id="${video.id}">Edit</button>
+                                <button class="ui mini negative button delete-video-btn" data-id="${video.id}">Delete</button>
+                            </td>
+                        </tr>
+                    `;
+                    adminVideoList.append(row);
+                });
+
+                // Attach event listeners for edit/delete buttons
+                adminVideoList.find('.edit-video-btn').on('click', async function() {
+                    const videoId = $(this).data('id');
+                    await populateVideoModal(videoId);
+                    videoModal.modal('show');
+                });
+
+                adminVideoList.find('.delete-video-btn').on('click', function() {
+                    const videoId = $(this).data('id');
+                    showConfirmModal("Delete Video", "Are you sure you want to delete this video? This action cannot be undone.", () => deleteVideo(videoId));
+                });
+            }
+        }
+
+        /**
+         * Populates the video modal for editing an existing video.
+         * @param {string} videoId - The ID of the video to edit.
+         */
+        async function populateVideoModal(videoId) {
+            showLoading(true);
+            try {
+                const videoDocRef = doc(db, `artifacts/${appId}/public/data/videos`, videoId);
+                const videoDoc = await getDoc(videoDocRef);
+
+                if (videoDoc.exists()) {
+                    const videoData = videoDoc.data();
+                    $('#video-modal-header').text('Edit Video');
+                    $('#video-form-submit-btn').text('Update Video');
+                    $('#video-id-input').val(videoId);
+                    $('#video-title').val(videoData.title);
+                    $('#video-description').val(videoData.description);
+                    $('#video-thumbnail').val(videoData.thumbnailUrl);
+                    $('#video-url').val(videoData.videoUrl); // Populate Google Drive URL
+                    $('#video-channel').val(videoData.channel || '');
+                    $('#video-featured').prop('checked', videoData.featured || false);
+                } else {
+                    showMessage("Video not found for editing.", "error");
+                }
+            } catch (error) {
+                console.error("Error populating video modal:", error);
+                showMessage("Failed to load video for editing.", "error");
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        /**
+         * Deletes a video from Firestore. (No storage deletion since it's external)
+         * @param {string} videoId - The ID of the video to delete.
+         */
+        async function deleteVideo(videoId) {
+            showLoading(true);
+            try {
+                // Delete video document from Firestore
+                await deleteDoc(doc(db, `artifacts/${appId}/public/data/videos`, videoId));
+                showMessage("Video deleted successfully!");
+            } catch (error) {
+                console.error("Error deleting video:", error);
+                showMessage(`Failed to delete video: ${error.message}`, "error");
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // --- User Management (Firestore) ---
+
+        /**
+         * Loads and displays all users in the admin dashboard table.
+         */
+        async function loadAdminUsers() {
+            if (!isAuthReady || currentUserRole !== 'admin') {
+                adminUserList.empty();
+                noAdminUsersMessage.text("You are not authorized to view this section.").show();
+                return;
+            }
+
+            showLoading(true);
+            try {
+                // Query the parent user documents, filtering for active (not deleted) users
+                const usersCollectionRef = collection(db, `artifacts/${appId}/users`);
+                const q = query(usersCollectionRef, where("status", "==", "active"));
+
+                const usersSnapshot = await getDocs(q);
+                const users = [];
+
+                // Use Promise.all for more efficient fetching of all profile data
+                const profilePromises = usersSnapshot.docs.map(userDoc => {
+                    const profileDocRef = doc(db, `artifacts/${appId}/users/${userDoc.id}/profile/data`);
+                    return getDoc(profileDocRef);
+                });
+
+                const profileDocs = await Promise.all(profilePromises);
+
+                profileDocs.forEach((profileDoc, index) => {
+                    if (profileDoc.exists()) {
+                        const parentDoc = usersSnapshot.docs[index];
+                        users.push({ id: parentDoc.id, ...profileDoc.data() });
+                    }
+                });
+                renderAdminUsers(users);
+            } catch (error) {
+                console.error("Error fetching admin users:", error);
+                showMessage("Failed to load admin users.", "error");
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        /**
+         * Renders the user list in the admin dashboard.
+         * @param {Array<object>} users - Array of user objects.
+         */
+        function renderAdminUsers(users) {
+            adminUserList.empty();
+            if (users.length === 0) {
+                noAdminUsersMessage.show();
+            } else {
+                noAdminUsersMessage.hide();
+                users.forEach(user => {
+                    const row = `
+                        <tr>
+                            <td>${user.id}</td>
+                            <td>${user.email}</td>
+                            <td>${user.role}</td>
+                            <td>
+                                <button class="ui mini primary button change-role-btn" data-id="${user.id}" data-email="${user.email}" data-role="${user.role}">Change Role</button>
+                                <button class="ui mini negative button delete-user-btn" data-id="${user.id}">Delete</button>
+                            </td>
+                        </tr>
+                    `;
+                    adminUserList.append(row);
+                });
+
+                // Attach event listeners for change role/delete user buttons
+                adminUserList.find('.change-role-btn').on('click', function() {
+                    const userId = $(this).data('id');
+                    const userEmail = $(this).data('email');
+                    const userRole = $(this).data('role');
+                    $('#user-id-input').val(userId);
+                    $('#user-email-display').val(userEmail);
+                    $('#user-new-role').val(userRole);
+                    userRoleModal.modal('show');
+                });
+
+                adminUserList.find('.delete-user-btn').on('click', function() {
+                    const userId = $(this).data('id');
+                    showConfirmModal(
+                        "Disable User Account",
+                        "Are you sure you want to disable this user's account? They will no longer be able to log in.",
+                        () => deleteUser(userId)
+                    );
+                });
+            }
+        }
+
+        /**
+         * Updates a user's role.
+         * @param {Event} event - The form submission event.
+         */
+        async function handleUserRoleFormSubmit(event) {
+            event.preventDefault();
+            if (!currentUser || currentUserRole !== 'admin') {
+                showMessage("You are not authorized to perform this action.", "error");
+                return;
+            }
+
+            showLoading(true);
+            const userIdToUpdate = $('#user-id-input').val();
+            const newRole = $('#user-new-role').val();
+
+            try {
+                const userDocRef = doc(db, `artifacts/${appId}/users/${userIdToUpdate}/profile/data`);
+                await updateDoc(userDocRef, { role: newRole });
+                showMessage("User role updated successfully!");
+                userRoleModal.modal('hide');
+                loadAdminUsers(); // Refresh user list
+            } catch (error) {
+                console.error("Error updating user role:", error);
+                showMessage(`Failed to update user role: ${error.message}`, "error");
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        /**
+         * Deletes a user from Firestore.
+         * Note: This is a "soft delete". It updates the user's status to 'deleted'
+         * so they can no longer log in, but their data is preserved.
+         * @param {string} userId - The ID of the user to delete.
+         */
+        async function deleteUser(userId) {
+            showLoading(true);
+            try {
+                // This is a "soft delete". We update the parent document's status to 'deleted'.
+                // The user's Auth record and profile data remain, but they cannot log in.
+                const userParentDocRef = doc(db, `artifacts/${appId}/users/${userId}`);
+                await updateDoc(userParentDocRef, { status: 'deleted' });
+                showMessage("User account has been disabled.");
+                loadAdminUsers(); // Refresh user list
+            } catch (error) {
+                console.error("Error deleting user:", error);
+                showMessage(`Failed to delete user: ${error.message}`, "error");
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        /**
+         * Displays a custom confirmation modal.
+         * @param {string} title - The title of the confirmation.
+         * @param {string} message - The confirmation message.
+         * @param {Function} onConfirm - Callback function to execute on confirmation.
+         */
+        function showConfirmModal(title, message, onConfirm) {
+            $('body').append(`
+                <div class="ui basic modal" id="confirm-modal">
+                    <div class="ui icon header">
+                        <i class="exclamation triangle icon"></i>
+                        ${title}
+                    </div>
+                    <div class="content" style="text-align: center; color: var(--text-color);">
+                        <p>${message}</p>
+                    </div>
+                    <div class="actions">
+                        <div class="ui red basic cancel inverted button">
+                            <i class="remove icon"></i>
+                            No
+                        </div>
+                        <div class="ui green ok inverted button">
+                            <i class="checkmark icon"></i>
+                            Yes
+                        </div>
+                    </div>
+                </div>
+            `);
+            $('#confirm-modal').modal({
+                closable: false,
+                onDeny: function() {
+                    $('#confirm-modal').remove();
+                },
+                onApprove: function() {
+                    onConfirm();
+                    $('#confirm-modal').remove();
+                }
+            }).modal('show');
+        }
+
+        // --- Event Listeners ---
+
+        $(document).ready(function() {
+            // Initialize Semantic UI tabs and dropdowns
+            $('.menu .item').tab();
+            $('.ui.dropdown').dropdown();
+
+            // Initialize channel dropdown
+            channelDropdown.dropdown({
+                onChange: function(value) {
+                    selectedChannel = value;
+                    renderVideos(allVideos);
+                }
+            });
+
+            // Theme toggle
+            $('#theme-toggle-btn').on('click', function() {
+                // Toggle theme based on current state
+                const isCurrentlyLight = $('body').hasClass('light-mode');
+                applyTheme(isCurrentlyLight ? 'dark' : 'light');
+            });
+
+            // Apply saved theme on page load
+            const savedTheme = localStorage.getItem('theme') || 'dark'; // Default to dark
+            applyTheme(savedTheme);
+
+            // Navigation links
+            $('#home-link').on('click', () => {
+                showSection('home-section');
+                loadVideos();
+            });
+            $('#back-to-home-btn').on('click', () => {
+                showSection('home-section');
+                loadVideos();
+            });
+            $('#admin-link').on('click', () => {
+                if (currentUserRole === 'admin') {
+                    showSection('admin-section');
+                    loadAdminVideos();
+                    loadAdminUsers();
+                } else {
+                    showMessage("You do not have administrative privileges.", "error");
+                }
+            });
+
+            // Auth buttons
+            $('#login-btn').on('click', () => loginModal.modal('show'));
+            $('#signup-btn').on('click', () => signupModal.modal('show'));
+            $('#logout-btn').on('click', logoutUser);
+
+            // Auth forms
+            loginForm.on('submit', function(event) {
+                event.preventDefault(); // Prevent default form submission
+                const email = $(this).find('input[name="email"]').val();
+                const password = $(this).find('input[name="password"]').val();
+                loginUser(email, password);
+            });
+
+            signupForm.on('submit', function(event) {
+                event.preventDefault(); // Prevent default form submission
+                const email = $(this).find('input[name="email"]').val();
+                const password = $(this).find('input[name="password"]').val();
+                registerUser(email, password);
+            });
+
+            // Admin video management
+            $('#add-video-btn').on('click', () => {
+                $('#video-modal-header').text('Add New Video');
+                $('#video-form-submit-btn').text('Add Video');
+                $('#video-id-input').val('');
+                videoForm[0].reset(); // Clear form fields
+                $('#video-featured').prop('checked', false); // Ensure checkbox is unchecked
+                videoModal.modal('show');
+            });
+
+            videoForm.on('submit', handleVideoFormSubmit);
+
+            // Admin user management
+            userRoleForm.on('submit', handleUserRoleFormSubmit);
+
+            // Initial content load after document is ready and auth is checked
+            loginModal.modal();
+            signupModal.modal();
+            videoModal.modal();
+            userRoleModal.modal();
+        });
+    </script>
+</body>
+</html>

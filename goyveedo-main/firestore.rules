@@ -1,0 +1,22 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Videos are readable by any authenticated user
+    // Only admins can create, update, or delete videos
+    match /artifacts/{YOUR_APP_ID}/public/data/videos/{videoId} {
+      allow read: if request.auth != null;
+      allow create, update, delete: if request.auth != null && get(/databases/$(database)/documents/artifacts/$(YOUR_APP_ID)/users/$(request.auth.uid)/profile/data).data.role == 'admin';
+    }
+
+    // User profiles are readable by any authenticated user
+    // Users can update their own profile (though only role is handled in this app)
+    // Admins can update any user's role and delete user profiles
+    match /artifacts/{YOUR_APP_ID}/users/{userId}/profile/data {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null; // Allow creation on first login/signup
+      allow update: if request.auth != null && request.auth.uid == userId; // User can update their own profile
+      allow update: if request.auth != null && get(/databases/$(database)/documents/artifacts/$(YOUR_APP_ID)/users/$(request.auth.uid)/profile/data).data.role == 'admin';
+      allow delete: if request.auth != null && get(/databases/$(database)/documents/artifacts/$(YOUR_APP_ID)/users/$(request.auth.uid)/profile/data).data.role == 'admin';
+    }
+  }
+}
