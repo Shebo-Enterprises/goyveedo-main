@@ -14,9 +14,9 @@
             --secondary-bg: #2a2a2a;
             --card-bg: #333333;
             --text-color: #f0f0f0;
-            --header-text: #f0f0f0;
-            --description-text: #bbb;
-            --meta-text: #999;
+            --header-text: #ffffff;
+            --description-text: #d1d5db;
+            --meta-text: #b0b0b0;
             --accent-color: #007bff;
             --border-color: #444;
             --hover-color: #4a4a4a;
@@ -95,6 +95,7 @@
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
             transition: transform 0.2s ease-in-out;
+            cursor: pointer;
         }
 
         .ui.card:hover, .ui.cards > .card:hover {
@@ -205,6 +206,10 @@
             display: -webkit-box;
             -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
+        }
+
+        .ui.card > .content > .meta {
+            color: var(--meta-text);
         }
 
         .ui.modal > .header {
@@ -619,7 +624,7 @@
             <div class="video-details">
                 <h2 id="player-video-title"></h2>
                 <p id="player-video-description" style="color: var(--description-text);"></p>
-                <p style="color: #999; font-size: 0.9em;">Uploaded by: <span id="player-video-uploader"></span></p>
+                
             </div>
         </div>
 
