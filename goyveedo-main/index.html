@@ -822,6 +822,29 @@
             $('#user-new-role').dropdown();
         }
 
+        /**
+         * Gets the thumbnail URL for a video.
+         * If a custom thumbnail exists, it's used.
+         * Otherwise, it generates one from the Google Drive video URL.
+         * @param {object} video - The video object from Firestore.
+         * @returns {string} The URL for the thumbnail image.
+         */
+        function getVideoThumbnail(video) {
+            if (video.thumbnailUrl) {
+                return video.thumbnailUrl;
+            }
+            if (video.videoUrl && video.videoUrl.includes('drive.google.com')) {
+                // Extracts file ID from URLs like: https://drive.google.com/file/d/FILE_ID/preview
+                const match = video.videoUrl.match(/d\/(.*?)\//);
+                if (match && match[1]) {
+                    const fileId = match[1];
+                    return `https://drive.google.com/thumbnail?id=${fileId}`;
+                }
+            }
+            // Fallback if no custom URL and not a valid GDrive URL
+            return 'https://placehold.co/600x400/333/fff?text=No+Preview';
+        }
+
 
         // --- Firebase Initialization and Authentication ---
 
@@ -1018,12 +1041,13 @@
             } else {
                 noFeaturedVideosMessage.hide();
                 videos.forEach(video => {
+                    const thumbnailUrl = getVideoThumbnail(video);
                     const lockOverlay = !canWatchVideos() ? '<div class="video-lock-overlay"><i class="lock icon"></i></div>' : '';
                     const featuredBadge = '<div class="featured-badge">Featured</div>';
                     const card = `
                         <div class="card" data-id="${video.id}">
                             <div class="image">
-                                <img src="${video.thumbnailUrl || 'https://placehold.co/600x400/333/fff?text=No+Thumbnail'}" alt="${video.title}">
+                                <img src="${thumbnailUrl}" alt="${video.title}">
                                 ${lockOverlay}
                                 ${featuredBadge}
                             </div>
@@ -1066,11 +1090,12 @@
             } else {
                 noVideosMessage.hide();
                 filteredVideos.forEach(video => {
+                    const thumbnailUrl = getVideoThumbnail(video);
                     const lockOverlay = !canWatchVideos() ? '<div class="video-lock-overlay"><i class="lock icon"></i></div>' : '';
                     const card = `
                         <div class="card" data-id="${video.id}">
                             <div class="image">
-                                <img src="${video.thumbnailUrl || 'https://placehold.co/600x400/333/fff?text=No+Thumbnail'}" alt="${video.title}">
+                                <img src="${thumbnailUrl}" alt="${video.title}">
                                 ${lockOverlay}
                             </div>
                             <div class="content">
@@ -1192,7 +1217,7 @@
                     await setDoc(newVideoRef, {
                         title,
                         description,
-                        thumbnailUrl: thumbnail || 'https://placehold.co/600x400/333/fff?text=No+Thumbnail', // Default if none provided
+                        thumbnailUrl: thumbnail, // Store empty string if no URL is provided
                         videoUrl, // Store Google Drive embed link
                         channel,
                         featured,
