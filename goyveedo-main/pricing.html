@@ -3,14 +3,194 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GOYVEEDO Pricing & Application</title>
+    <title>GOYVEEDO Pricing & Checkout</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        /* --- Use all your previous styles here --- */
-        /* You can copy the entire <style> block from your original file */
-        /* ... (copy original styles here) ... */
+        /* Base styles for dark mode */
+        :root {
+            --background-color: #1a1a1a;
+            --text-color: #e0e0e0;
+            --header-color: #f0f0f0;
+            --segment-bg: #222222; /* Made darker for better contrast in dark mode */
+            --border-color: #444;
+            --input-bg: #3a3a3a;
+            --input-text: #e0e0e0;
+            --placeholder-color: #bbb;
+            --card-border-dash: rgba(255,255,255,0.1); /* For dashed borders in dark mode */
+            --card-shadow-base: 0 4px 8px rgba(0,0,0,0.2);
+            --card-shadow-hover: 0 6px 12px rgba(0,0,0,0.3);
+        }
+
+        /* Light mode specific styles */
+        body.light-mode {
+            --background-color: #f0f2f5;
+            --text-color: #333;
+            --header-color: #222;
+            --segment-bg: #ffffff;
+            --border-color: #ddd;
+            --input-bg: #f9f9f9;
+            --input-text: #333;
+            --placeholder-color: #999;
+            --card-border-dash: rgba(0,0,0,0.1); /* For dashed borders in light mode */
+            --card-shadow-base: 0 4px 8px rgba(0,0,0,0.1); /* Lighter shadow for light mode */
+            --card-shadow-hover: 0 6px 12px rgba(0,0,0,0.15); /* Lighter hover shadow */
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .ui.inverted.menu {
+            background-color: #1c1c1c; /* Darker than body background */
+        }
+
+        body.light-mode .ui.inverted.menu {
+            background-color: #3f51b5; /* A standard blue for light mode nav */
+        }
+
+        .ui.segment {
+            background-color: var(--segment-bg);
+            color: var(--text-color); /* Ensure segment text color adapts */
+            border: 1px solid var(--border-color);
+            box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+        }
+
+        .ui.header {
+            color: var(--header-color) !important;
+        }
+
+        /* Form element styling to adapt to themes */
+        .ui.form label {
+            color: var(--text-color) !important; /* Ensure labels adapt */
+        }
+        .ui.form small {
+            color: var(--text-color) !important; /* Ensure small text adapts */
+            opacity: 0.7;
+        }
+
+        .ui.form input[type="text"],
+        .ui.form input[type="email"],
+        .ui.form input[type="tel"],
+        .ui.form input[type="number"], /* Added for quantity field */
+        .ui.form select,
+        .ui.form textarea {
+            background-color: var(--input-bg) !important;
+            color: var(--input-text) !important;
+            border: 1px solid var(--border-color) !important;
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+        }
+
+        .ui.form input::placeholder,
+        .ui.form textarea::placeholder {
+            color: var(--placeholder-color) !important;
+        }
+
+        /* Message Box Styling */
+        .message-box {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            padding: 15px 30px;
+            border-radius: 5px;
+            color: white;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        .message-box.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        .message-box.success { background-color: #4CAF50; }
+        .message-box.error { background-color: #f44336; }
+        .message-box.info { background-color: #2196F3; }
+
+        /* Loader Overlay Styling */
+        .loader-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7); /* Dark semi-transparent background */
+            display: flex; /* Use flexbox for centering */
+            justify-content: center;
+            align-items: center;
+            z-index: 999; /* Above other content, below message box */
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .loader-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Ensure Semantic UI dimmer content is centered within the overlay */
+        .loader-overlay .ui.dimmer {
+            position: static !important; /* Override Semantic UI's absolute positioning */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: none !important; /* No additional background for the dimmer itself */
+        }
+        .loader-overlay .ui.dimmer > .content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .loader-overlay .ui.loader {
+            color: white !important; /* Ensure loader text is visible */
+        }
+
+        /* Custom styling for cards to make them pop a bit more and adapt to theme */
+        .ui.card {
+            border-radius: 8px;
+            background-color: var(--segment-bg); /* Use segment background for cards */
+            color: var(--text-color); /* Use general text color for card content */
+            box-shadow: var(--card-shadow-base); /* Use dynamic shadow variable */
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out, background-color 0.3s ease, color 0.3s ease;
+        }
+        .ui.card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--card-shadow-hover); /* Use dynamic hover shadow variable */
+        }
+        .ui.card > .content > .header {
+            color: var(--header-color) !important; /* Ensure header color adapts */
+            font-weight: 600;
+        }
+        .ui.card > .content > .meta {
+            color: var(--text-color) !important; /* Ensure meta text color adapts */
+            opacity: 0.7;
+        }
+        .ui.card > .content > .description {
+            color: var(--text-color) !important; /* Ensure description text color adapts */
+        }
+        .ui.card > .content > .description ul {
+            list-style: none;
+            padding: 0;
+        }
+        .ui.card > .content > .description ul li {
+            padding: 5px 0;
+            /* Use a variable for the dashed border color */
+            border-bottom: 1px dashed var(--card-border-dash);
+        }
+        .ui.card > .content > .description ul li:last-child {
+            border-bottom: none;
+        }
     </style>
 </head>
 <body>
@@ -18,7 +198,7 @@
     <div id="message-box" class="message-box"></div>
     <div id="loader-overlay" class="loader-overlay">
         <div class="ui active inverted dimmer">
-            <div class="ui large text loader">Loading...</div>
+            <div class="ui large text loader">Processing your request...</div>
         </div>
     </div>
 
@@ -51,78 +231,80 @@
 
     <div class="ui container" style="flex-grow:1; padding: 40px 0;">
         <!-- Pricing Section -->
-        <div class="ui segment" style="margin-bottom: 40px;">
-            <h2 class="ui header" style="color: var(--text-color);">Pricing Plans</h2>
-            <div class="ui three stackable cards">
-                <div class="ui card">
-                    <div class="content">
-                        <div class="header">Viewer</div>
-                        <div class="meta">$0 / month</div>
-                        <div class="description">
-                            <ul>
-                                <li>Access public content</li>
-                                <li>Basic features</li>
-                                <li>Community support</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                <div class="ui card">
-                    <div class="content">
-                        <div class="header">Pro</div>
-                        <div class="meta">$9.99 / month</div>
-                        <div class="description">
-                            <ul>
-                                <li>Full library access</li>
-                                <li>Priority support</li>
-                                <li>Save favorite shows</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                <div class="ui card">
-                    <div class="content">
-                        <div class="header">Enterprise</div>
-                        <div class="meta">Contact Us</div>
-                        <div class="description">
-                            <ul>
-                                <li>Custom integrations</li>
-                                <li>Dedicated account manager</li>
-                                <li>Advanced analytics</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+     
 
-        <!-- Application Form Section -->
+        <!-- Checkout Form Section -->
         <div class="ui segment">
-            <h2 class="ui header" style="color: var(--text-color);">Apply for Viewership</h2>
-            <form class="ui form" name="viewership-app" method="POST" data-netlify="true">
-                <input type="hidden" name="form-name" value="viewership-app">
-                <div class="field">
-                    <label>Full Name</label>
-                    <input type="text" name="name" placeholder="Your name" required>
+            <h2 class="ui header" style="color: var(--text-color);"Request Access"</h2>
+            <form class="ui form" name="checkout-form" method="POST" data-netlify="true">
+                <input type="hidden" name="form-name" value="checkout-form">
+
+                <h3 class="ui dividing header">Contact Information</h3>
+                <div class="two fields">
+                    <div class="field">
+                        <label>Full Name</label>
+                        <input type="text" name="full_name" placeholder="John Doe" required>
+                    </div>
+                    <div class="field">
+                        <label>Email Address</label>
+                        <input type="email" name="email" placeholder="john.doe@example.com" required>
+                    </div>
                 </div>
                 <div class="field">
-                    <label>Email Address</label>
-                    <input type="email" name="email" placeholder="Your email" required>
+                    <label>Phone Number (Optional)</label>
+                    <input type="tel" name="phone" placeholder="(123) 456-7890">
                 </div>
+
+                <h3 class="ui dividing header">Subscription Details</h3>
+                <div class="two fields">
+                    <div class="field">
+                        <label>Choose Your Plan</label>
+                        <select name="plan" id="plan-select" class="ui dropdown" required>
+                            <option value="">Select a plan</option>
+                            <option value="viewer">Viewer (Free)</option>
+                        
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label>Quantity</label>
+                        <input type="number" name="quantity" placeholder="1" value="1" min="1" required>
+                        <small>For individual subscriptions, keep at 1.</small>
+                    </div>
+                </div>
+             
+
+                <h3 class="ui dividing header">Street Address (for verification purposes)</h3>
                 <div class="field">
-                    <label>Which plan are you interested in?</label>
-                    <select name="plan" class="ui dropdown" required>
-                        <option value="">Select a plan</option>
-                        <option value="viewer">Viewer (Free)</option>
-                        <option value="pro">Pro ($9.99/month)</option>
-                        <option value="enterprise">Enterprise</option>
-                    </select>
+                    <label>Street Address</label>
+                    <input type="text" name="street_address" placeholder="123 Main St">
                 </div>
+                <div class="two fields">
+                    <div class="field">
+                        <label>City</label>
+                        <input type="text" name="city" placeholder="Anytown">
+                    </div>
+                    <div class="field">
+                        <label>State / Province</label>
+                        <input type="text" name="state_province" placeholder="CA">
+                    </div>
+                </div>
+                <div class="two fields">
+                    <div class="field">
+                        <label>Zip / Postal Code</label>
+                        <input type="text" name="zip_postal_code" placeholder="90210">
+                    </div>
+                    <div class="field">
+                        <label>Country</label>
+                        <input type="text" name="country" placeholder="USA">
+                    </div>
+                </div>
+
                 <div class="field">
-                    <label>Message (optional)</label>
-                    <textarea name="message" rows="3" placeholder="Tell us about your needs"></textarea>
+                    <label>Order Notes (Optional)</label>
+                    <textarea name="order_notes" id="order-notes" rows="3" placeholder="Tell us about your needs or what you hope to achieve with this plan."></textarea>
                 </div>
-                <button class="ui primary button" type="submit">Apply</button>
+
+                <button class="ui primary button" type="submit">Place Order</button>
             </form>
         </div>
     </div>
@@ -130,14 +312,105 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.js"></script>
     <script>
-        // Theme toggle logic (unchanged from your original)
+        // --- Loader & Message Box Functions ---
+        const loaderOverlay = document.getElementById('loader-overlay');
+        const messageBox = document.getElementById('message-box');
+
+        function showLoader(message = 'Processing your request...') {
+            document.querySelector('#loader-overlay .ui.large.text.loader').textContent = message;
+            loaderOverlay.classList.add('active');
+        }
+
+        function hideLoader() {
+            loaderOverlay.classList.remove('active');
+        }
+
+        function showMessage(type, text, duration = 5000) {
+            messageBox.className = `message-box show ${type}`; // Reset classes and add type/show
+            messageBox.textContent = text;
+            setTimeout(() => {
+                messageBox.classList.remove('show');
+            }, duration);
+        }
+
+        // --- Form Submission Handler ---
+        document.forms['checkout-form'].addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent default form submission
+            showLoader('Placing your order...'); // Show the loader
+
+            // Simulate a network request or processing time for user feedback
+            setTimeout(() => {
+                hideLoader(); // Hide the loader after a delay
+                // Netlify will automatically handle the form submission in the background
+                // because of `data-netlify="true"` and the hidden `form-name` field.
+                showMessage('success', 'Your order has been placed successfully! Thank you.', 5000);
+
+                // Reset the form after successful submission simulation
+                event.target.reset();
+
+            }, 2500); // Simulate a 2.5 second processing time for user feedback
+        });
+
+        // --- Gemini API Integration: Get Plan Insight ---
+        document.getElementById('get-plan-insight-btn').addEventListener('click', async function() {
+            const planSelect = document.getElementById('plan-select');
+            const selectedPlan = planSelect.value;
+            const selectedPlanText = planSelect.options[planSelect.selectedIndex].text;
+            const orderNotes = document.getElementById('order-notes').value.trim();
+
+            if (!selectedPlan) {
+                showMessage('error', 'Please select a plan first to get insight.', 3000);
+                return;
+            }
+
+            showLoader('Generating plan insight...');
+
+            const prompt = `User is interested in the '${selectedPlanText}' plan. Their additional notes are: '${orderNotes}'. Please provide a concise summary of this plan's benefits. If the notes suggest it, briefly mention if a different plan (Viewer, Pro, Enterprise) might be more suitable, without directly telling them to change. Keep it under 100 words.`;
+
+            try {
+                let chatHistory = [];
+                chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+                const payload = { contents: chatHistory };
+                const apiKey = ""; // Canvas will provide this API key at runtime
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const result = await response.json();
+
+                if (result.candidates && result.candidates.length > 0 &&
+                    result.candidates[0].content && result.candidates[0].content.parts &&
+                    result.candidates[0].content.parts.length > 0) {
+                    const insightText = result.candidates[0].content.parts[0].text;
+                    showMessage('info', `✨ Plan Insight: ${insightText}`, 10000); // Show insight for longer
+                } else {
+                    showMessage('error', 'Failed to get plan insight. Please try again.', 5000);
+                    console.error('Gemini API response structure unexpected:', result);
+                }
+            } catch (error) {
+                showMessage('error', 'Error connecting to AI service. Please try again later.', 5000);
+                console.error('Error calling Gemini API:', error);
+            } finally {
+                hideLoader();
+            }
+        });
+
+        // --- Theme toggle logic ---
         document.getElementById('theme-toggle-btn').addEventListener('click', function() {
             document.body.classList.toggle('light-mode');
-            document.getElementById('theme-icon').classList.toggle('moon');
-            document.getElementById('theme-icon').classList.toggle('sun');
+            const themeIcon = document.getElementById('theme-icon');
+            themeIcon.classList.toggle('moon');
+            themeIcon.classList.toggle('sun');
         });
-        // Semantic UI dropdowns
-        $('.ui.dropdown').dropdown();
+
+        // --- Semantic UI dropdowns initialization ---
+        $(document).ready(function() {
+            $('.ui.dropdown').dropdown();
+        });
     </script>
 </body>
 </html>
