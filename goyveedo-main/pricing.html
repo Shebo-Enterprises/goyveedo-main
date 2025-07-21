@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GOYVEEDO Pricing & Application</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* --- Use all your previous styles here --- */
+        /* You can copy the entire <style> block from your original file */
+        /* ... (copy original styles here) ... */
+    </style>
+</head>
+<body>
+    <!-- Message Box and Loader -->
+    <div id="message-box" class="message-box"></div>
+    <div id="loader-overlay" class="loader-overlay">
+        <div class="ui active inverted dimmer">
+            <div class="ui large text loader">Loading...</div>
+        </div>
+    </div>
+
+    <!-- Navigation Menu (unchanged) -->
+    <div class="ui inverted menu">
+        <div class="ui container">
+            <a class="item" id="home-link">
+                <i class="play circle outline icon"></i>
+                GOYVEEDO
+            </a>
+            <div class="right menu">
+                <a class="item" id="theme-toggle-btn" title="Toggle Theme" style="cursor: pointer;">
+                    <i class="large moon icon" id="theme-icon"></i>
+                </a>
+                <div class="item" id="user-info-display" style="display: none;">
+                    Welcome, <span id="current-user-email"></span> (<span id="current-user-role"></span>)
+                </div>
+                <a class="item" id="login-btn">
+                    <i class="sign in alternate icon"></i> Login
+                </a>
+                <a class="item" id="signup-btn">
+                    <i class="user plus icon"></i> Sign Up
+                </a>
+                <a class="item" id="logout-btn" style="display: none;">
+                    <i class="sign out alternate icon"></i> Logout
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="ui container" style="flex-grow:1; padding: 40px 0;">
+        <!-- Pricing Section -->
+        <div class="ui segment" style="margin-bottom: 40px;">
+            <h2 class="ui header" style="color: var(--text-color);">Pricing Plans</h2>
+            <div class="ui three stackable cards">
+                <div class="ui card">
+                    <div class="content">
+                        <div class="header">Viewer</div>
+                        <div class="meta">$0 / month</div>
+                        <div class="description">
+                            <ul>
+                                <li>Access public content</li>
+                                <li>Basic features</li>
+                                <li>Community support</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="ui card">
+                    <div class="content">
+                        <div class="header">Pro</div>
+                        <div class="meta">$9.99 / month</div>
+                        <div class="description">
+                            <ul>
+                                <li>Full library access</li>
+                                <li>Priority support</li>
+                                <li>Save favorite shows</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="ui card">
+                    <div class="content">
+                        <div class="header">Enterprise</div>
+                        <div class="meta">Contact Us</div>
+                        <div class="description">
+                            <ul>
+                                <li>Custom integrations</li>
+                                <li>Dedicated account manager</li>
+                                <li>Advanced analytics</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Application Form Section -->
+        <div class="ui segment">
+            <h2 class="ui header" style="color: var(--text-color);">Apply for Viewership</h2>
+            <form class="ui form" name="viewership-app" method="POST" data-netlify="true">
+                <input type="hidden" name="form-name" value="viewership-app">
+                <div class="field">
+                    <label>Full Name</label>
+                    <input type="text" name="name" placeholder="Your name" required>
+                </div>
+                <div class="field">
+                    <label>Email Address</label>
+                    <input type="email" name="email" placeholder="Your email" required>
+                </div>
+                <div class="field">
+                    <label>Which plan are you interested in?</label>
+                    <select name="plan" class="ui dropdown" required>
+                        <option value="">Select a plan</option>
+                        <option value="viewer">Viewer (Free)</option>
+                        <option value="pro">Pro ($9.99/month)</option>
+                        <option value="enterprise">Enterprise</option>
+                    </select>
+                </div>
+                <div class="field">
+                    <label>Message (optional)</label>
+                    <textarea name="message" rows="3" placeholder="Tell us about your needs"></textarea>
+                </div>
+                <button class="ui primary button" type="submit">Apply</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.js"></script>
+    <script>
+        // Theme toggle logic (unchanged from your original)
+        document.getElementById('theme-toggle-btn').addEventListener('click', function() {
+            document.body.classList.toggle('light-mode');
+            document.getElementById('theme-icon').classList.toggle('moon');
+            document.getElementById('theme-icon').classList.toggle('sun');
+        });
+        // Semantic UI dropdowns
+        $('.ui.dropdown').dropdown();
+    </script>
+</body>
+</html>
